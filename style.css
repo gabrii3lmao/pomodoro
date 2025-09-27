@@ -1,0 +1,27 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    height: 100vh;
+    padding-top: 80px; /* Aumentei um pouco */
+    border-style: solid;
+    gap: 40px; /* Espaço consistente entre os elementos */
+}
+
+.timer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px; /* Espaço entre timer e botões */
+}
+
+#display {
+    margin: 0; /* Remove margem padrão do parágrafo */
+    font-size: 3rem; /* Tamanho decente para visualização */
+}
+
+.botoes {
+    display: flex;
+    gap: 20px; /* Espaço entre os botões */
+}
