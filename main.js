@@ -35,11 +35,6 @@
         
         // Atualiza o display
         timerDisplay.textContent = formatTime(remainingTime);
-        
-        console.log('Tempos salvos:', {
-            trabalho: workTimeEdit.value + 'min',
-            descanso: restTimeEdit.value + 'min'
-        });
     }
 
    
