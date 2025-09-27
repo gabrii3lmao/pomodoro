@@ -3,10 +3,12 @@
     //variáveis
     const timerDisplay = document.getElementById("display");
     let timer = null;
+    const workTimeEdit = document.getElementById("workTimeEdit");
+    const restTimeEdit = document.getElementById("restTimeEdit");
     let isRunning = false;
     let workTime = 25 * 60 * 1000; // 25 minutos de trabalho
     let restTime = 6 * 60 * 1000;   // 6 minutos de descanso
-    let currentMode = 'work'; // 'work' ou 'rest'
+    let currentMode = 'work';
     let remainingTime = workTime;
     let endTime = 0;
     const startBtn = document.getElementById("start");
@@ -14,6 +16,32 @@
     const pauseBtn = document.getElementById("pause");
     const rodadasDisplay = document.getElementById("rodadas");
     let roundCounts = 0;
+    const modalEditar = document.getElementById("modalEditar");
+    const fecharModal = document.getElementById("fecharModal");
+
+    // Função para salvar os tempos automaticamente
+    function salvarTempos() {
+        // Converte minutos para milissegundos e salva nas variáveis
+        workTime = workTimeEdit.value * 60 * 1000;
+        restTime = restTimeEdit.value * 60 * 1000;
+        
+        // Se estiver no modo correspondente, aplica o novo tempo
+        if (currentMode === 'work') {
+            remainingTime = workTime;
+        } else if (currentMode === 'rest') {
+            remainingTime = restTime;
+        }
+        
+        // Atualiza o display
+        timerDisplay.textContent = formatTime(remainingTime);
+        
+        console.log('Tempos salvos:', {
+            trabalho: workTimeEdit.value + 'min',
+            descanso: restTimeEdit.value + 'min'
+        });
+    }
+
+   
 
     //funções
     function start(){
@@ -46,6 +74,16 @@
         remainingTime = restTime;
         endTime = Date.now() + restTime;
         document.title = "Temporizador - Descanso";
+        start(); // Reinicia o timer com novo tempo
+    }
+
+    function startWorkTimer() {
+        stop();
+        currentMode = 'work';
+        remainingTime = workTime;
+        endTime = Date.now() + workTime;
+        document.title = "Temporizador - Trabalho";
+        start(); // Reinicia o timer com novo tempo
     }
 
     function updateRodadasDisplay() {
@@ -64,24 +102,29 @@
     function updateDisplay(){
         remainingTime = endTime - Date.now();
         
-        // Quando o tempo acaba
         if(remainingTime <= 0){
             if(currentMode === 'work') {
-                // Tempo de trabalho acabou, inicia descanso
+                alert("Hora do descanso!");
                 startRestTimer();
+                stop();
             } else {
-                // Tempo de descanso acabou, para tudo
+                alert("De volta ao trabalho!");
                 roundCounts++
                 updateRodadasDisplay();
+                startWorkTimer();
                 stop();
-                timerDisplay.textContent = "00:00:00";
-                reset();
-                document.title = "Ciclo completo";
+                document.title = "Ciclo completo - Trabalho";
             }
         }
 
         timerDisplay.textContent = formatTime(remainingTime);
         document.title = `${currentMode === 'work' ? 'Trabalho' : 'Descanso'}: ${timerDisplay.textContent}`;
+    }
+
+    // Função para fechar modal e salvar
+    function fecharESalvar() {
+        salvarTempos(); // Salva antes de fechar
+        modalEditar.style.display = "none";
     }
 
     // Inicializa
@@ -91,5 +134,35 @@
     startBtn.addEventListener("click", start);
     resetBtn.addEventListener("click", reset);
     pauseBtn.addEventListener("click", stop);
+    
+    // Modal events
+    timerDisplay.addEventListener("click", function(e){
+        e.preventDefault();
+        modalEditar.style.display = "flex";
+    });
+    
+    fecharModal.addEventListener("click", fecharESalvar);
+    
+    modalEditar.addEventListener("click", function(e) {
+        if (e.target === modalEditar) {
+            fecharESalvar();
+        }
+    });
 
+    // Salvar com Enter nos inputs
+    workTimeEdit.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') fecharESalvar();
+    });
+    
+    restTimeEdit.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') fecharESalvar();
+    });
+
+     // Event listeners para salvar automaticamente
+    workTimeEdit.addEventListener('input', salvarTempos);
+    restTimeEdit.addEventListener('input', salvarTempos);
+    
+    // Salvar também quando perder o foco (backup)
+    workTimeEdit.addEventListener('change', salvarTempos);
+    restTimeEdit.addEventListener('change', salvarTempos);
 })();
