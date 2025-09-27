@@ -19,13 +19,14 @@
     const modalEditar = document.getElementById("modalEditar");
     const fecharModal = document.getElementById("fecharModal");
 
-    // Função para salvar os tempos automaticamente
+
+   
+
+    //funções
+    
     function salvarTempos() {
-        // Converte minutos para milissegundos e salva nas variáveis
         workTime = workTimeEdit.value * 60 * 1000;
         restTime = restTimeEdit.value * 60 * 1000;
-        
-        // Se estiver no modo correspondente, aplica o novo tempo
         if (currentMode === 'work') {
             remainingTime = workTime;
         } else if (currentMode === 'rest') {
@@ -40,10 +41,7 @@
             descanso: restTimeEdit.value + 'min'
         });
     }
-
-   
-
-    //funções
+    
     function start(){
         if(!isRunning){
             endTime = Date.now() + remainingTime;
@@ -157,8 +155,6 @@
     restTimeEdit.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') fecharESalvar();
     });
-
-     // Event listeners para salvar automaticamente
     workTimeEdit.addEventListener('input', salvarTempos);
     restTimeEdit.addEventListener('input', salvarTempos);
     
