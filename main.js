@@ -18,15 +18,15 @@
     let roundCounts = 0;
     const modalEditar = document.getElementById("modalEditar");
     const fecharModal = document.getElementById("fecharModal");
+    const situacao = document.getElementById("situacaoId");
+    // Função para salvar os tempos automaticamente
 
 
-   
-
-    //funções
-    
     function salvarTempos() {
+        // Converte minutos para milissegundos e salva nas variáveis
         workTime = workTimeEdit.value * 60 * 1000;
         restTime = restTimeEdit.value * 60 * 1000;
+        // Se estiver no modo correspondente, aplica o novo tempo
         if (currentMode === 'work') {
             remainingTime = workTime;
         } else if (currentMode === 'rest') {
@@ -41,12 +41,20 @@
             descanso: restTimeEdit.value + 'min'
         });
     }
-    
+
+   
+
+    //funções
     function start(){
         if(!isRunning){
             endTime = Date.now() + remainingTime;
             timer = setInterval(updateDisplay, 10);
             isRunning = true;
+            if(currentMode === 'work'){
+                situacao.textContent = "Hora de Estudar! Foco!";
+            } else {
+                situacao.textContent = "Hora do descanso... Relaxe!";
+            }
         }
     }
 
@@ -94,7 +102,7 @@
         let minutes = Math.floor(milliseconds / (1000 * 60));
         let seconds = Math.floor((milliseconds % (1000 * 60)) / 1000);
         let ms = Math.floor((milliseconds % 1000) / 10);
-        return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}:${String(ms).padStart(2, "0")}`;
+        return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
     }
 
     function updateDisplay(){
@@ -102,11 +110,9 @@
         
         if(remainingTime <= 0){
             if(currentMode === 'work') {
-                alert("Hora do descanso!");
                 startRestTimer();
                 stop();
             } else {
-                alert("De volta ao trabalho!");
                 roundCounts++
                 updateRodadasDisplay();
                 startWorkTimer();
@@ -116,7 +122,7 @@
         }
 
         timerDisplay.textContent = formatTime(remainingTime);
-        document.title = `${currentMode === 'work' ? 'Trabalho' : 'Descanso'}: ${timerDisplay.textContent}`;
+        document.title = `${currentMode === 'work' ? 'Trabalho' : 'Descanso'} - ${timerDisplay.textContent}`;
     }
 
     // Função para fechar modal e salvar
@@ -155,6 +161,8 @@
     restTimeEdit.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') fecharESalvar();
     });
+
+     // Event listeners para salvar automaticamente
     workTimeEdit.addEventListener('input', salvarTempos);
     restTimeEdit.addEventListener('input', salvarTempos);
     
