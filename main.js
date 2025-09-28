@@ -1,16 +1,18 @@
 ;(function(){
-
     //variáveis
     const timerDisplay = document.getElementById("display");
     let timer = null;
     const workTimeEdit = document.getElementById("workTimeEdit");
     const restTimeEdit = document.getElementById("restTimeEdit");
     let isRunning = false;
-    let workTime = 25 * 60 * 1000; // 25 minutos de trabalho
+    let workTime = 30 * 60 * 1000; // 30 minutos de trabalho
     let restTime = 6 * 60 * 1000;   // 6 minutos de descanso
+    let longRestTime = 15 * 60 * 1000; //15 minuto de pausa longa
     let currentMode = 'work';
     let remainingTime = workTime;
     let endTime = 0;
+    const audioClick = document.getElementById("audioClick");
+    const audioAlarm = document.getElementById("audioAlarm");
     const startBtn = document.getElementById("start");
     const resetBtn = document.getElementById("reset");
     const pauseBtn = document.getElementById("pause");
@@ -21,8 +23,10 @@
     const situacao = document.getElementById("situacaoId");
     // Função para salvar os tempos automaticamente
 
-
     function salvarTempos() {
+        if(workTimeEdit.value === "" && restTimeEdit.value === ""){
+            return;
+        }
         // Converte minutos para milissegundos e salva nas variáveis
         workTime = workTimeEdit.value * 60 * 1000;
         restTime = restTimeEdit.value * 60 * 1000;
@@ -32,7 +36,6 @@
         } else if (currentMode === 'rest') {
             remainingTime = restTime;
         }
-        
         // Atualiza o display
         timerDisplay.textContent = formatTime(remainingTime);
     }
@@ -49,8 +52,15 @@
                 situacao.textContent = "Hora de Estudar! Foco!";
             } else {
                 situacao.textContent = "Hora do descanso... Relaxe!";
+                if(roundCounts > 0 && roundCounts % 2 === 0) {
+                    situacao.textContent = "Pausa Longa!";
+               }
             }
         }
+    }
+    function playAudio(audio){
+         audio.currentTime = 0; // Reinicia o som
+         audio.play().catch(e => console.log('Erro ao tocar som:', e));
     }
 
     function stop(){
@@ -71,10 +81,12 @@
 
     function startRestTimer(){
         stop();
+        playAudio(audioAlarm);
         currentMode = 'rest';
         remainingTime = restTime;
         endTime = Date.now() + restTime;
         document.title = "Temporizador - Descanso";
+        startBtn.focus();
         start(); // Reinicia o timer com novo tempo
     }
 
@@ -84,6 +96,7 @@
         remainingTime = workTime;
         endTime = Date.now() + workTime;
         document.title = "Temporizador - Trabalho";
+        startBtn.focus();
         start(); // Reinicia o timer com novo tempo
     }
 
@@ -91,12 +104,15 @@
         if (rodadasDisplay) {
             rodadasDisplay.textContent = `#${roundCounts + 1}`;
         }
+        if(roundCounts > 0 && roundCounts % 2 === 0) {
+            restTime = longRestTime
+        }
+
     }
 
     function formatTime(milliseconds) {
         let minutes = Math.floor(milliseconds / (1000 * 60));
         let seconds = Math.floor((milliseconds % (1000 * 60)) / 1000);
-        let ms = Math.floor((milliseconds % 1000) / 10);
         return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
     }
 
@@ -130,9 +146,20 @@
     reset();
     
     // Eventos
-    startBtn.addEventListener("click", start);
-    resetBtn.addEventListener("click", reset);
-    pauseBtn.addEventListener("click", stop);
+    startBtn.addEventListener("click", () => {
+        playAudio(audioClick);
+        start();
+        audioAlarm.pause();
+        audioAlarm.currentTime = 0;
+    });
+    resetBtn.addEventListener("click", () =>{
+        playAudio(audioClick);
+        reset();
+    });
+    pauseBtn.addEventListener("click", () =>{
+        playAudio(audioClick);
+        stop();
+    });
     
     // Modal events
     timerDisplay.addEventListener("click", function(e){

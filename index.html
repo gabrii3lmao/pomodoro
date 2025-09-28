@@ -15,6 +15,7 @@
         <div class="timer">
            <div id="display">
                 00:00:00
+                <audio src="audios/alarm.mp3" id="audioAlarm" preload="auto"></audio>
            </div>
            <div class="situacao" id="situacaoId">
             
@@ -25,9 +26,9 @@
                <div class="modal-conteudo">
                    <div class="editar-tempo" id="editarTempo"> 
                        <label for="worktime">Tempo de Estudos (minutos): </label>
-                       <input type="number" id="workTimeEdit" min="1" max="120" value="25">
+                       <input type="number" id="workTimeEdit" min="1" max="120" placeholder="min 1 max 120">
                        <label for="resttime">Tempo de Descanso (minutos): </label>
-                       <input type="number" id="restTimeEdit" min="1" max="60" value="6">
+                       <input type="number" id="restTimeEdit" min="1" max="60" placeholder="min 1 max 60">
                        <button type="button" id="fecharModal">Fechar</button>
                    </div>
                </div>
@@ -35,6 +36,7 @@
            
             <div class="botoes"> 
                 <button type="button" id="start">COMEÇAR</button>
+                <audio src="audios/click.mp3" id="audioClick" preload="auto"></audio>
                 <button type="button" id="pause">PAUSAR</button>
                 <button type="button" id="reset">RESET</button>
             </div>
